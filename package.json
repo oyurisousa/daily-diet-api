@@ -22,6 +22,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
+    "@fastify/jwt": "^8.0.1",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
