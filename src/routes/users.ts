@@ -5,10 +5,10 @@ import { randomUUID } from 'crypto'
 import { hash } from 'bcrypt'
 
 export async function usersRoutes(app: FastifyInstance) {
-  app.get('/', async () => {
+  app.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
     const user = await knex('users').select('*')
 
-    return user
+    return reply.send(user)
   })
 
   app.post('/', async (request: FastifyRequest, reply: FastifyReply) => {

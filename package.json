@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "lint": "eslint src --ext .ts --fix",
-    "knex": "node --import --env-file=.env tsx ./node_modules/.bin/knex"
+    "knex": "node --import tsx ./node_modules/.bin/knex",
+    "test": "vitest"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +14,7 @@
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",
     "@types/node": "^20.14.9",
+    "@types/supertest": "^6.0.2",
     "eslint": "^8.57.0",
     "sqlite3": "^5.1.7",
     "supertest": "^7.0.0",

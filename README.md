@@ -17,7 +17,7 @@
   - Melhor sequência de refeições dentro da dieta
 
 ## requisitos não funcionais
-- [ ] As refeições devem ser relacionadas a um usuário
-- [ ] Deve ser possível identificar o usuário entre as requisições
+- [👌] As refeições devem ser relacionadas a um usuário
+- [👌] Deve ser possível identificar o usuário entre as requisições
 - [ ] O usuário só pode visualizar, editar e apagar as refeições o qual ele criou
 
