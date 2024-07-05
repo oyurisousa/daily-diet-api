@@ -1,7 +1,7 @@
 ## requisitos funcionais
 - [👌] Deve ser possível criar um usuário.
 - [👌] Deve ser possível authenticar um  usuário.
-- [ ] Deve ser possível registrar uma refeição feita, com as seguintes informações:
+- [👌] Deve ser possível registrar uma refeição feita, com as seguintes informações:
   - Nome
   - Descrição
   - Data e Hora
