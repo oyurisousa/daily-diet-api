@@ -48,4 +48,51 @@ export async function mealsRoutes(app: FastifyInstance) {
       return reply.status(201).send(meal)
     },
   )
+
+  app.patch('/:id', { onRequest: [verifyJWT] }, async (request, reply) => {
+    const updateMealParamsSchema = z.object({
+      id: z.string(),
+    })
+
+    const { id } = updateMealParamsSchema.parse(request.params)
+
+    // check body
+
+    const updateMealBodySchema = z.object({
+      name: z.string().optional(),
+      description: z.string().optional(),
+      isDiet: z.boolean().optional(),
+    })
+
+    const { name, description, isDiet } = updateMealBodySchema.parse(
+      request.body,
+    )
+
+    const { sub } = request.user
+
+    // check if user contain meal
+    const meal = await knex('meals')
+      .where({
+        user_id: sub,
+        id,
+      })
+      .select('*')
+      .first()
+
+    if (!meal) {
+      throw new Error('meal not authorized!')
+    }
+
+    const mealUpdated = await knex('meals')
+      .where({ id, user_id: sub })
+      .update({
+        name: name || meal.name,
+        description: description || meal.description,
+        is_diet: isDiet || meal.is_diet,
+        updated_at: knex.fn.now(),
+      })
+      .returning('*')
+
+    return reply.send(mealUpdated)
+  })
 }
