@@ -45,11 +45,11 @@ export async function mealsRoutes(app: FastifyInstance) {
         })
         .returning('*')
 
-      return reply.status(201).send(meal)
+      return reply.status(201).send({ meal })
     },
   )
 
-  app.patch('/:id', { onRequest: [verifyJWT] }, async (request, reply) => {
+  app.put('/:id', { onRequest: [verifyJWT] }, async (request, reply) => {
     const updateMealParamsSchema = z.object({
       id: z.string(),
     })
@@ -83,16 +83,23 @@ export async function mealsRoutes(app: FastifyInstance) {
       throw new Error('meal not authorized!')
     }
 
+    if (name) {
+      meal.name = name
+    }
+
+    if (description) {
+      meal.description = description
+    }
+
+    if (isDiet) {
+      meal.is_diet = isDiet
+    }
+
     const mealUpdated = await knex('meals')
       .where({ id, user_id: sub })
-      .update({
-        name: name || meal.name,
-        description: description || meal.description,
-        is_diet: isDiet || meal.is_diet,
-        updated_at: knex.fn.now(),
-      })
+      .update(meal)
       .returning('*')
 
-    return reply.send(mealUpdated)
+    return reply.send({ mealUpdated })
   })
 }
