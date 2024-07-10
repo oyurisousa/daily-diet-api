@@ -20,6 +20,35 @@ export async function mealsRoutes(app: FastifyInstance) {
       return reply.status(200).send({ meals })
     },
   )
+
+  app.get(
+    '/:id',
+    {
+      onRequest: [verifyJWT],
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const getMealSchemaParams = z.object({
+        id: z.string(),
+      })
+
+      const { id } = getMealSchemaParams.parse(request.params)
+
+      const { sub } = request.user
+
+      const meal = await knex('meals')
+        .select('*')
+        .where({
+          user_id: sub,
+          id,
+        })
+        .first()
+      if (!meal) {
+        return reply.status(400).send()
+      }
+
+      return reply.status(200).send({ meal })
+    },
+  )
   app.post(
     '/',
     { onRequest: [verifyJWT] },
@@ -102,4 +131,27 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     return reply.send({ mealUpdated })
   })
+
+  app.delete(
+    '/:id',
+    {
+      onRequest: [verifyJWT],
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const deleteMealSchemaParams = z.object({
+        id: z.string(),
+      })
+
+      const { id } = deleteMealSchemaParams.parse(request.params)
+
+      const { sub } = request.user
+
+      await knex('meals').delete('*').where({
+        user_id: sub,
+        id,
+      })
+
+      return reply.status(204).send()
+    },
+  )
 }

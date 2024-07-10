@@ -101,4 +101,46 @@ describe('Meals routes', () => {
       }),
     ])
   })
+
+  it('should be can delete a meal', async () => {
+    await request(app.server)
+      .post('/users')
+      .send({
+        username: 'usertest',
+        password: '12345678',
+      })
+      .expect(201)
+
+    const responseAuth = await request(app.server)
+      .post('/auth')
+      .send({
+        username: 'usertest',
+        password: '12345678',
+      })
+      .expect(200)
+
+    const { token } = responseAuth.body
+
+    const responseCreateMeal = await request(app.server)
+      .post('/meals')
+      .send({
+        name: 'natural juice',
+        description: 'sugar free orange juice',
+        isDiet: true,
+      })
+      .set({ authorization: `Bearer ${token}` })
+      .expect(201)
+
+    const { meal } = await responseCreateMeal.body
+
+    await request(app.server)
+      .delete(`/meals/${meal[0].id}`)
+      .set({ authorization: `Bearer ${token}` })
+      .expect(204)
+
+    await request(app.server)
+      .get(`/meals/${meal[0].id}`)
+      .set({ authorization: `Bearer ${token}` })
+      .expect(400)
+  })
 })
