@@ -19,5 +19,13 @@ declare module 'knex/types/tables' {
       createdAt: Date
       updated_at: Date
     }
+    offensive: {
+      id: string
+      best_offensive: number
+      aux_best_offensive: number
+      user_id: string
+      created_at: Date
+      updated_at: Date
+    }
   }
 }

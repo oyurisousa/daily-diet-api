@@ -9,3 +9,5 @@ export async function verifyJWT(request: FastifyRequest, reply: FastifyReply) {
     })
   }
 }
+
+// 6ed9212f-1b40-4d22-a454-f7dba77ac7d6

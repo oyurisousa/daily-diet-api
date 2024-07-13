@@ -55,6 +55,50 @@ describe('Meals routes', () => {
     ])
   })
 
+  it('should be get info a meal', async () => {
+    await request(app.server)
+      .post('/users')
+      .send({
+        username: 'usertest',
+        password: '12345678',
+      })
+      .expect(201)
+
+    const responseAuth = await request(app.server)
+      .post('/auth')
+      .send({
+        username: 'usertest',
+        password: '12345678',
+      })
+      .expect(200)
+
+    const { token } = responseAuth.body
+
+    const responseCreateMeal = await request(app.server)
+      .post('/meals')
+      .send({
+        name: 'natural juice',
+        description: 'sugar free orange juice',
+        isDiet: true,
+      })
+      .set({ authorization: `Bearer ${token}` })
+      .expect(201)
+    const [meal] = responseCreateMeal.body.meal
+
+    const responseMeal = await request(app.server)
+      .get(`/meals/${meal.id}`)
+      .set({ authorization: `Bearer ${token}` })
+      .expect(200)
+
+    expect(responseMeal.body.meal).toEqual(
+      expect.objectContaining({
+        name: 'natural juice',
+        description: 'sugar free orange juice',
+        is_diet: 1,
+      }),
+    )
+  })
+
   it('should be can update a meal', async () => {
     await request(app.server)
       .post('/users')

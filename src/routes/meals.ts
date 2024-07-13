@@ -74,6 +74,31 @@ export async function mealsRoutes(app: FastifyInstance) {
         })
         .returning('*')
 
+      const offensive = await knex('offensive')
+        .where({
+          user_id: sub,
+        })
+        .first()
+
+      if (!offensive) {
+        throw new Error('offensive not exists!')
+      }
+
+      const auxBestOffensive = isDiet ? offensive.aux_best_offensive + 1 : 0
+
+      const bestOffensive =
+        auxBestOffensive > offensive.best_offensive
+          ? auxBestOffensive
+          : offensive.best_offensive
+
+      await knex('offensive')
+        .where({
+          user_id: sub,
+        })
+        .update({
+          best_offensive: bestOffensive,
+          aux_best_offensive: auxBestOffensive,
+        })
       return reply.status(201).send({ meal })
     },
   )
