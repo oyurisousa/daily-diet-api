@@ -42,6 +42,7 @@ export async function mealsRoutes(app: FastifyInstance) {
           id,
         })
         .first()
+
       if (!meal) {
         return reply.status(400).send()
       }
@@ -49,6 +50,7 @@ export async function mealsRoutes(app: FastifyInstance) {
       return reply.status(200).send({ meal })
     },
   )
+
   app.post(
     '/',
     { onRequest: [verifyJWT] },
@@ -110,8 +112,6 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     const { id } = updateMealParamsSchema.parse(request.params)
 
-    // check body
-
     const updateMealBodySchema = z.object({
       name: z.string().optional(),
       description: z.string().optional(),
@@ -124,7 +124,6 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     const { sub } = request.user
 
-    // check if user contain meal
     const meal = await knex('meals')
       .where({
         user_id: sub,
@@ -134,7 +133,7 @@ export async function mealsRoutes(app: FastifyInstance) {
       .first()
 
     if (!meal) {
-      throw new Error('meal not authorized!')
+      return reply.status(400).send()
     }
 
     if (name) {
@@ -170,7 +169,16 @@ export async function mealsRoutes(app: FastifyInstance) {
       const { id } = deleteMealSchemaParams.parse(request.params)
 
       const { sub } = request.user
+      const meal = await knex('meals')
+        .where({
+          user_id: sub,
+          id,
+        })
+        .first()
 
+      if (!meal) {
+        return reply.status(400).send()
+      }
       await knex('meals').delete('*').where({
         user_id: sub,
         id,

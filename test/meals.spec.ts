@@ -187,4 +187,64 @@ describe('Meals routes', () => {
       .set({ authorization: `Bearer ${token}` })
       .expect(400)
   })
+
+  it.only('should not be can delete a meal created by other user', async () => {
+    await request(app.server)
+      .post('/users')
+      .send({
+        username: 'usertest',
+        password: '12345678',
+      })
+      .expect(201)
+
+    await request(app.server)
+      .post('/users')
+      .send({
+        username: 'usertest2',
+        password: '12345678',
+      })
+      .expect(201)
+
+    const responseAuthUser1 = await request(app.server)
+      .post('/auth')
+      .send({
+        username: 'usertest',
+        password: '12345678',
+      })
+      .expect(200)
+
+    const { token } = responseAuthUser1.body
+
+    const responseAuthUser2 = await request(app.server)
+      .post('/auth')
+      .send({
+        username: 'usertest2',
+        password: '12345678',
+      })
+      .expect(200)
+
+    const { token: token2 } = responseAuthUser2.body
+
+    const responseUser1CreateMeal = await request(app.server)
+      .post('/meals')
+      .send({
+        name: 'natural juice',
+        description: 'sugar free orange juice',
+        isDiet: true,
+      })
+      .set({ authorization: `Bearer ${token}` })
+      .expect(201)
+
+    const { meal } = await responseUser1CreateMeal.body
+
+    await request(app.server)
+      .delete(`/meals/${meal[0].id}`)
+      .set({ authorization: `Bearer ${token2}` })
+      .expect(400)
+
+    await request(app.server)
+      .get(`/meals/${meal[0].id}`)
+      .set({ authorization: `Bearer ${token}` })
+      .expect(200)
+  })
 })
