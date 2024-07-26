@@ -13,6 +13,19 @@ export async function usersRoutes(app: FastifyInstance) {
     })
 
     const { username, password } = createUserBodySchema.parse(request.body)
+
+    const userExists = await knex('users')
+      .where({
+        username,
+      })
+      .first()
+
+    if (userExists) {
+      return reply.status(400).send({
+        message: 'username already exists!',
+      })
+    }
+
     const [user] = await knex('users')
       .insert({
         id: randomUUID(),

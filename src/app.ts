@@ -4,7 +4,6 @@ import { mealsRoutes } from './routes/meals'
 import fastifyJwt from '@fastify/jwt'
 import { authRoutes } from './routes/authenticate'
 import { ZodError } from 'zod'
-import { knex } from './database'
 
 export const app = fastify()
 

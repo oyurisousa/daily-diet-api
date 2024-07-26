@@ -1,5 +1,7 @@
 node_modules
 
-db/*.db
+app.db
+test.db
 
 .env
+.env.test
